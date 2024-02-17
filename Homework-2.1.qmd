@@ -1,0 +1,138 @@
+---
+title: "Homework 2: Submission 1"
+subtitle: "Research Methods, Spring 2024"
+author: Leila Mulveny
+format:
+  pdf:
+    output-file: "mulveny-l-hwk2-1"
+    output-ext:  "pdf"
+    header-includes:
+      - \usepackage{float}
+      - \floatplacement{table}{H}
+      - \usepackage{hyperref}
+abstract: |
+  \href{https://github.com/LMULVEN/Homework2}{Homework 2: Repository} 
+---
+
+```{r}
+#| include: false
+
+if (!require("pacman")) install.packages("pacman")
+pacman::p_load(tidyverse, ggplot2, dplyr, lubridate, readr, readxl, hrbrthemes, fixest,
+               scales, gganimate, gapminder, gifski, png, tufte, plotly, OECD,
+               ggrepel, survey, foreign, devtools, pdftools, kableExtra, modelsummary,
+               kableExtra)
+```
+
+```{r}
+#| include: false
+#| eval: true
+ 
+load("Hwk2_workspace.Rdata")
+```
+
+\newpage
+# Enrollment Data
+Answer the following based on the enrollment data:
+
+\vspace{.2in}
+\noindent 1. How many hospitals filed more than one report in the same year? Show your answer as a line graph of the number of hospitals over time.<br>
+
+The number of hospitals that filed more than one report in the same year can be visualized in 
+@fig-duplicates.
+
+```{r}
+#| echo: false
+#| label: fig-duplicates
+#| fig-cap: "Number of Hospitals Over Time"
+
+Q1
+```
+
+\newpage
+\noindent 2. After removing/combining multiple reports, how many unique hospital IDs (Medicare provider numbers) exist in the data? <br>
+
+After removing/combining multiple reports, there exist `r nrow(num_unique_hospitals)` unique hospital IDs in the data. 
+
+\newpage
+\noindent 3.What is the distribution of total charges (tot_charges in the data) in each year? Show your results with a “violin” plot, with charges on the y-axis and years on the x-axis.<br>
+
+The distribution of total charges in each year can be visualized in 
+@fig-tot-charges.
+
+```{r}
+#| echo: false
+#| label: fig-tot-charges
+#| fig-cap: "Distribution of Total Charges by Year"
+
+Q3
+```
+
+\newpage
+\noindent 4. What is the distribution of estimated prices in each year? Again present your results with a violin plot, and recall our formula for estimating prices from class. Be sure to do something about outliers and/or negative prices in the data.
+
+After removing outliers and negative prices in the data, the distribution of estimated prices in each year can be visualized in 
+@fig-price.
+
+```{r}
+#| echo: false
+#| label: fig-price
+#| fig-cap: "Estimated Prices in Each Year (Excluding Outliers)"
+
+Q4
+```
+
+\newpage
+# Estimate ATEs
+\noindent For the rest of the assignment, you should include only observations in 2012. So we are now dealing with cross-sectional data in which some hospitals are penalized and some are not. Please also define penalty as whether the sum of the HRRP and HVBP amounts are negative (i.e., a net penalty under the two programs).
+
+\noindent 5. Calculate the average price among penalized versus non-penalized hospitals.<br>
+
+The mean price among penalized hospitals is $9.896. The mean price among non-penalized hospitals is $9,560. The difference between mean prices for penalized versus non-penalized hospitals is $335. 
+
+\newpage
+\noindent 6. Split hospitals into quartiles based on bed size. To do this, create 4 new indicator variables, where each variable is set to 1 if the hospital’s bed size falls into the relevant quartile. Provide a table of the average price among treated/control groups for each quartile.
+@fig-quartiles.
+
+```{r}
+#| echo: false
+#| label: fig-quartiles
+#| fig-cap: "Average Price Among Treated/Control Groups for Each Quartile"
+
+average_prices
+```
+
+\newpage
+\noindent 7. Find the average treatment effect using each of the following estimators, and present your results in a single table:
+
+Nearest neighbor matching (1-to-1) with inverse variance distance based on quartiles of bed size
+Nearest neighbor matching (1-to-1) with Mahalanobis distance based on quartiles of bed size
+Inverse propensity weighting, where the propensity scores are based on quartiles of bed size
+Simple linear regression, adjusting for quartiles of bed size using dummy variables and appropriate interactions as discussed in class
+
+Results:
+@fig-results.
+
+```{r}
+#| echo: false
+#| label: fig-results
+#| fig-cap: "Average Treatment Effects Across Methods (1-4)"
+
+results_table
+```
+
+\newpage
+\noindent 8. With these different treatment effect estimators, are the results similar, identical, very different?<br>
+
+I very likely made an error in my code which is causing me to have the same average treatment effect estimate (ATE) of about -5.846 for all four different methods. As of right now, I am finding the results to be identifcal across these different methods of estimation.
+
+\newpage
+\noindent 9. Do you think you’ve estimated a causal effect of the penalty? Why or why not? (just a couple of sentences)<br>
+
+Determining whether the effect of the treatment of "penalty" is causal depends on how well we control for confounding variables and minimize potential bias. The nearest neighbor matching, propensity score matching, and regression adjusting for covariates aim to control for confounding variables and potential sources of bias by balancing observed covariates between treated and control groups. However, I think we would need to conduct further sensitivity analyses to conclusively say whether or not the effect is causal.  
+
+\newpage
+\noindent 10. Briefly describe your experience working with these data (just a few sentences). Tell me one thing you learned and one thing that really aggravated or surprised you.<br>
+
+I found part 7 to be the most challenging in this assignment becuase when I tried to run the code from class I was getting a lot of errors, one of which was pertaining to the way I had previously defined "penalty". I actually found it effective in this case to just completely start over and re-run my code, I'm not sure why exactly this worked to eliminate the error because my code itself did not change, but I think through trying to trubble-shoot my code I at least gained a better understanding of what each line was doing for question 7 where we were using different methods for estimating the ATE of the penalty variable. One thing that I learned is that it helps for me to save my plots, tables, images, etc. as objects which I can later call to print/visualize. This helped me to periodically evaluate my results while trying to run code pertaining to the entire assignment. 
+
